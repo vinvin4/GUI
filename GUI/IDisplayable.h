@@ -1,32 +1,61 @@
-#pragma once
+п»ї#pragma once
 #include "IDrawable.h"
-
-//базовый класс сложных элементов
+//Р±Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ СЃР»РѕР¶РЅС‹С… СЌР»РµРјРµРЅС‚РѕРІ
 class IDisplayable abstract : public IDrawable
 {
 private:
-	//отвечает за то будет элемент рисоваться или нет
-	bool toDraw;
+	bool toDraw;//!< РѕС‚РІРµС‡Р°РµС‚ Р·Р° С‚Рѕ Р±СѓРґРµС‚ СЌР»РµРјРµРЅС‚ СЂРёСЃРѕРІР°С‚СЊСЃСЏ РёР»Рё РЅРµС‚
 public:
-	//позволяет получить toDraw
+	/*!
+	\brief РЈР·РЅР°С‚СЊ СЂРёСѓРµС‚СЃСЏ Р»Рё СЌР»РµРјРµРЅС‚
+	*/
 	virtual bool GetDrawState();
-	//позволяет назначить toDraw
+	/*!
+	\brief РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ РѕС‚СЂРёСЃРѕРІРєСѓ
+	\param state РїР°СЂР°РјРµС‚СЂ РѕС‚СЂРёСЃРѕРІРєРё
+	*/
 	virtual void SetDrawState(bool);
-	virtual bool IsClickedThrough();//пока не думаем об этом
+	
+	virtual bool IsClickedThrough();//TODO
 	//virtual sf::Vector2f GetScreenSize() = 0;//TODO
 
-	//ВИРТУАЛЬНЫЙ ОБРАБОТЧИК СОБЫТИЙ!
-	//Его надо перегружать и в нем все обрабатывать
-	//Пример как есть в GUIBox.h (он там закомменчен)
-	virtual void handleEvent(const sf::Event& event) {};
-
 protected:
-	bool clicksThrough;
-	//указатель на окно в которое надо рисовать
-	RenderWindow* renderWindow;
+	bool clicksThrough;//!< РїСЂРѕРєР»РёРєРёРІР°РµС‚СЃСЏ Р»Рё СЌР»РµРјРµРЅС‚
+	RenderWindow* renderWindow;//!< СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РѕРєРЅРѕ РЅР° РєРѕС‚РѕСЂРѕРј РѕРЅ СЂР°СЃРїРѕР»РѕР¶РµРЅ
+	/*!
+	\brief РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєР»Р°СЃСЃР°
+
+	\param x С…-РєРѕРѕСЂРґРёРЅР°С‚Р°
+	\param y y-РєРѕРѕСЂРґРёРЅР°С‚Р°
+	\param width С€РёСЂРёРЅР°
+	\param height РІС‹СЃРѕС‚Р°
+
+	*/
 	IDisplayable(RenderWindow*, float, float, float, float);
+	/*!
+	\brief РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєР»Р°СЃСЃР°
+
+	\param position_ РїРѕР·РёС†РёСЏ
+	\param width С€РёСЂРёРЅР°
+	\param height РІС‹СЃРѕС‚Р°
+
+	*/
 	IDisplayable(RenderWindow*, Vector2f, float, float);
+	/*!
+	\brief РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєР»Р°СЃСЃР°
+
+	\param x С…-РєРѕРѕСЂРґРёРЅР°С‚Р°
+	\param y y-РєРѕРѕСЂРґРёРЅР°С‚Р°
+	\param size_ СЂР°Р·РјРµСЂ
+
+	*/
 	IDisplayable(RenderWindow*, float, float, Vector2f);
+	/*!
+	\brief РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєР»Р°СЃСЃР°
+
+	\param position_ РїРѕР·РёС†РёСЏ
+	\param size_ СЂР°Р·РјРµСЂ
+
+	*/
 	IDisplayable(RenderWindow*, Vector2f, Vector2f);
 };
-

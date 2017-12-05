@@ -1,46 +1,30 @@
-#include "GUIBox.h"
+ï»¿#include "GUIBox.h"
 
-GUIBox::GUIBox(RenderWindow* renderWindow_, float x, float y, float width, float height, std::string text_, TextStyle *Ñtstyle, GUIStyle *Cgstyle) : IDisplayable(renderWindow_, x, y, width, height)
+GUIBox::GUIBox(RenderWindow* renderWindow_, float x, float y, float width, float height, GUIStyle *Cgstyle) : IDisplayable(renderWindow_, x, y, width, height)
 {
 	gstyle = Cgstyle;
-	tstyle = Ñtstyle;
-	text.setString(text_);
-	text.setFont(tstyle->font);
-	text.setCharacterSize(tstyle->fontSize);
-	text.setFillColor(tstyle->color);
+	sprite.setTexture(gstyle->mainTex);
 	Recalc();
 }
 
-GUIBox::GUIBox(RenderWindow* renderWindow_, Vector2f position_, Vector2f size_, std::string text_, TextStyle *Ñtstyle, GUIStyle *Cgstyle) : IDisplayable(renderWindow_, position_,size_)
+GUIBox::GUIBox(RenderWindow* renderWindow_, Vector2f position_, Vector2f size_, GUIStyle *Cgstyle) : IDisplayable(renderWindow_, position_,size_)
 {
 	gstyle = Cgstyle;
-	tstyle = Ñtstyle;
-	text.setString(text_);
-	text.setFont(tstyle->font);
-	text.setCharacterSize(tstyle->fontSize);
-	text.setFillColor(tstyle->color);
+	sprite.setTexture(gstyle->mainTex);
 	Recalc();
 }
 
-GUIBox::GUIBox(RenderWindow* renderWindow_, float x, float y, Vector2f size_, std::string text_, TextStyle *Ñtstyle, GUIStyle *Cgstyle) : IDisplayable(renderWindow_, x, y, size_)
+GUIBox::GUIBox(RenderWindow* renderWindow_, float x, float y, Vector2f size_, GUIStyle *Cgstyle) : IDisplayable(renderWindow_, x, y, size_)
 {
 	gstyle = Cgstyle;
-	tstyle = Ñtstyle;
-	text.setString(text_);
-	text.setFont(tstyle->font);
-	text.setCharacterSize(tstyle->fontSize);
-	text.setFillColor(tstyle->color);
+	sprite.setTexture(gstyle->mainTex);
 	Recalc();
 }
 
-GUIBox::GUIBox(RenderWindow* renderWindow_, Vector2f position_, float width, float height, std::string text_, TextStyle *Ñtstyle, GUIStyle *Cgstyle) : IDisplayable(renderWindow_, position_, width, height)
+GUIBox::GUIBox(RenderWindow* renderWindow_, Vector2f position_, float width, float height, GUIStyle *Cgstyle) : IDisplayable(renderWindow_, position_, width, height)
 {
 	gstyle = Cgstyle;
-	tstyle = Ñtstyle;
-	text.setString(text_);
-	text.setFont(tstyle->font);
-	text.setCharacterSize(tstyle->fontSize);
-	text.setFillColor(tstyle->color);
+	sprite.setTexture(gstyle->mainTex);
 	Recalc();
 }
 
@@ -52,15 +36,6 @@ void GUIBox::Recalc()
 	float posY = pos.y;
 	float width = sz.x;
 	float height = sz.y;
-	if (tstyle->align == 'c')
-	{
-		FloatRect textRect = text.getLocalBounds();
-		text.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
-		text.setPosition(Vector2f(posX + (width / 2.0f), posY + (height / 2.0f)));
-	}
-	if (tstyle->align == 'l')
-		text.setPosition(Vector2f(posX + 1, posY + 1));
-	sprite.setTexture(gstyle->mainTex);
 	sprite.setPosition(posX, posY);
 	sprite.setTextureRect(IntRect(0, 0, width, height));
 	for (int i = 0; i < 4; i++)
@@ -80,23 +55,67 @@ void GUIBox::Recalc()
 void GUIBox::SetPosition(Vector2f position_)
 {
 	IDisplayable::SetPosition(position_);
+    if (resizing == false)
+    {
+        for (auto& elem : elements)
+        {
+            elem->SetPosition(position_);
+        }
+    }
+    resizing = false;
 	Recalc();
+}
+void GUIBox::SetPosition(Vector2f position_, Vector2f coefficient_)
+{
+    resizing = true;
+    SetPosition(Vector2f(position.x * coefficient_.x, position.y * coefficient_.y));
+    for (auto& elem : elements)
+    {
+        elem->SetPosition(position_, coefficient_);
+        //elem->SetPosition(Vector2f(elem->GetPosition().x * coefficient_.x, elem->GetPosition().y * coefficient_.y));
+    }
+    Recalc();
+    /*IDisplayable::SetPosition(Vector2f(position.x * coefficient_.x, position.y * coefficient_.y));
+    for (auto& elem : elements)
+    {
+        elem->SetPosition(position_, coefficient_);
+    }
+    Recalc();*/
 }
 void GUIBox::SetPosition(float x, float y)
 {
-	IDisplayable::SetPosition(x, y);
-	Recalc();
+    SetPosition(Vector2f(x, y));
 }
 
 void GUIBox::SetSize(Vector2f size_)
 {
 	IDisplayable::SetSize(size_);
+    if (resizing == false)
+    {
+        for (auto& elem : elements)
+        {
+            elem->SetSize(size_);
+        }
+    }
+    resizing = false;
 	Recalc();
 }
+
+void GUIBox::SetSize(Vector2f size_, Vector2f coefficient_)
+{
+    resizing = true;
+    SetSize(Vector2f(size.x * coefficient_.x, size.y * coefficient_.y));
+    for (auto& elem : elements)
+    {
+        elem->SetSize(size_, coefficient_);
+        //elem->SetSize(Vector2f(elem->GetSize().x * coefficient_.x, elem->GetSize().y * coefficient_.y));
+    }
+    Recalc();
+}
+
 void GUIBox::SetSize(float width, float height)
 {
-	IDisplayable::SetSize(width, height);
-	Recalc();
+    SetSize(Vector2f(width, height));
 }
 
 void GUIBox::SetGStyle(GUIStyle *Cgstyle)
@@ -104,36 +123,13 @@ void GUIBox::SetGStyle(GUIStyle *Cgstyle)
 	gstyle = Cgstyle;
 	Recalc();
 }
-void GUIBox::SetTStyle(TextStyle *Ctstyle)
-{
-	tstyle = Ctstyle;
-	Vector2f pos = GetPosition();
-	Vector2f sz = GetSize();
-	float posX = pos.x;
-	float posY = pos.y;
-	float width = sz.x;
-	float height = sz.y;
-	if (tstyle->align == 'c')
-	{
-		FloatRect textRect = text.getLocalBounds();
-		text.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
-		text.setPosition(Vector2f(posX + (width / 2.0f), posY + (height / 2.0f)));
-	}
-	if (tstyle->align == 'l')
-		text.setPosition(Vector2f(posX + 1, posY + 1));
-}
-
-void GUIBox::SetText(char *Ctext)
-{
-	text.setString(Ctext);
-}
 
 void GUIBox::Draw()
 {
+    Recalc();
 	renderWindow->draw(sprite);
 	renderWindow->draw(frames[0]);
 	renderWindow->draw(frames[1]);
 	renderWindow->draw(frames[2]);
 	renderWindow->draw(frames[3]);
-	renderWindow->draw(text);
 }

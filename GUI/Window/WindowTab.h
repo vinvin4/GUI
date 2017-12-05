@@ -1,29 +1,56 @@
-#pragma once
+п»ї#pragma once
 #include <map>
 #include "../GUI/GUILayer.h"
+#include "../Elements/ScrollingPanel/ScrollingPanel.h"
+
 enum WindowTabState
 {
 	opened = 0,
 	closed = 1
 };
-//просто примите его существование как данность пока что, пользутесь им так же как написан ов handler.cpp (можете прост ctrl-c)
+/*!
+\brief РћРєРЅРѕ
+
+*/
 class WindowTab : ObservableGUI
 {
 private:
-	std::vector<std::shared_ptr<GUILayer>> GUILayers;
-	RenderWindow window;
+	std::vector<std::shared_ptr<GUILayer>> GUILayers; //!< РІРµРєС‚РѕСЂ СЃР»РѕРµРІ
+	std::vector<std::shared_ptr<ScrollingPanel>> ScrollPanels;//!> РІРµРєС‚РѕСЂ СЂРёСЃСѓРµРјС‹С… РїРµСЂРµРјР°С‚С‹РІР°СЋС‰РёС…СЃСЏ РїР°РЅРµР»РµР№
+	RenderWindow window; //!< РѕРєРЅРѕ
+
+
+    /*!
+    \brief Р¤СѓРЅРєС†РёСЏ, РєРѕС‚РѕСЂР°СЏ РёР·РјРµРЅСЏРµС‚ СЂР°Р·РјРµСЂ РєРѕРјРїРѕРЅРµРЅС‚РѕРІ, РµСЃР»Рё РѕРєРЅРѕ СЂР°СЃС‚СЏРЅСѓР»Рё
+    \param event_ РЎРѕРґРµСЂР¶РёС‚ РІ СЃРµР±Рµ РЅРѕРІС‹Р№ СЂР°Р·РјРµСЂ РѕРєРЅР°
+    */
+    void Resizing(const Event& event_);
 public:
-	//констуркутор, не парьтесь на этот счет, просто передавайте ему положение размеры
-	//пока что вторые два аргумента передавайте (0,0) и (ширинаОкна, высотаОкна)
-	//обрезание поля видимости все равно пока не работает :)
+    WindowTabState state;
+	/*!
+	\brief РЎРѕР·РґР°РЅРёРµ СЃР»РѕСЏ
+
+	\param position Р Р°СЃРїРѕР»РѕР¶РµРЅРёРµ layer
+	\param size Р Р°Р·РјРµСЂ layer
+
+	РЎРѕР·РґР°РЅРёРµ СЃР»РѕСЏ РЅР° СЌС‚РѕРј РѕРєРЅРµ
+	*/
 	std::shared_ptr<GUILayer> CreateGUILayer(Vector2f position_, Vector2f size_);
-	void Redraw();//единственная функция которую надо вызывать для отрисовки, не трогаем ее
+	std::shared_ptr<ScrollingPanel> CreateScrollPanel(Vector2f maxScrollPanelSize, Vector2f scrFieldPosition, Vector2f scrFieldSize, Color scrFieldColor);
+	void Redraw();//РµРґРёРЅСЃС‚РІРµРЅРЅР°СЏ С„СѓРЅРєС†РёСЏ РєРѕС‚РѕСЂСѓСЋ РЅР°РґРѕ РІС‹Р·С‹РІР°С‚СЊ РґР»СЏ РѕС‚СЂРёСЃРѕРІРєРё, РЅРµ С‚СЂРѕРіР°РµРј РµРµ
+	/*!
+	\brief РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєР»Р°СЃСЃР°
+
+	\param mode РІРёРґРµРѕ-СЂРµР¶РёРј РѕРєРЅР°
+	\param name РёРјСЏ РѕРєРЅР°
+
+	РЎРѕР·РґР°РЅРёРµ РѕРєРЅР°
+	*/
 	WindowTab(VideoMode mode, char* name);
-	WindowTabState state;
+
 	//TODO
-	//НЕДОПИЛЕНА, НЕ ЮЗАТЬ ПОКА!
 	void removeElement(IDrawable* observer) override;
+	//! РїРµСЂРµРіСЂСѓР·РєР° РјРµС‚РѕРґР° РѕРїРѕРІРµС‰РµРЅРёСЏ СЃР»СѓС€Р°С‚РµР»РµР№ Рѕ СЃРѕР±С‹С‚РёРё
 	void notifyAll(const sf::Event& event) const override;
 	~WindowTab();
 };
-
